@@ -8,8 +8,10 @@ services:
   - type: web
     name: agrizone_backend
     env: python
+    rootDir: backend
     buildCommand: ./build.sh
     startCommand: gunicorn agrizone.wsgi:application
+
     envVars:
       - key: DATABASE_URL
         fromDatabase:
