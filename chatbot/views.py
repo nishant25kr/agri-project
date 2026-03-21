@@ -11,9 +11,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-def chat_home(request):
-    recent_chats = ChatMessage.objects.all()[:10]
-    return render(request, 'chatbot/chat.html', {'recent_chats': recent_chats})
+def chat(request):
+    return JsonResponse({"status": "Chatbot API is online", "endpoint": "/chatbot/get_response/"})
+
 
 @csrf_exempt
 def send_message(request):

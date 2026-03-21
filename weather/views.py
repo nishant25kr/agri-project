@@ -5,8 +5,8 @@ from django.views.decorators.csrf import csrf_exempt
 import requests
 import json
 
-def weather_home(request):
-    return render(request, 'weather/weather.html')
+def index(request):
+    return JsonResponse({"status": "Weather API is online", "endpoint": "/weather/get_weather/"})
 
 @csrf_exempt
 def get_weather(request):

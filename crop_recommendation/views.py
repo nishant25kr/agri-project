@@ -19,13 +19,14 @@ def home(request):
 
 
 def about(request):
-    return render(request, 'crop_recommendation/about.html')
+    return JsonResponse({"status": "Agrizone About API"})
 
 def contact(request):
-    return render(request, 'crop_recommendation/contact.html')
+    return JsonResponse({"status": "Agrizone Contact API"})
 
 def recommend(request):
-    return render(request, 'crop_recommendation/recommend.html')
+    return JsonResponse({"status": "Agrizone Recommend API"})
+
 
 @csrf_exempt
 def predict(request):

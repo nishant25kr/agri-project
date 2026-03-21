@@ -4,6 +4,7 @@ from . import views
 app_name = 'pest_alerts'
 
 urlpatterns = [
-    path('', views.alerts_home, name='home'),
+    path('', views.alerts, name='alerts'),
     path('get-alerts/', views.get_alerts, name='get_alerts'),
 ]
+

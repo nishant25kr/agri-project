@@ -7,8 +7,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-def alerts_home(request):
-    return render(request, 'pest_alerts/alerts.html')
+def alerts(request):
+    return JsonResponse({"status": "Pest Alerts API is online"})
+
 
 def get_alerts(request):
     crop = request.GET.get('crop', '').lower()
