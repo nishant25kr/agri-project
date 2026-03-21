@@ -1,0 +1,72 @@
+.alerts-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 16px;
+  align-items: flex-end;
+  padding: 28px;
+  max-width: 800px;
+  margin: 0 auto 32px;
+}
+
+@media (max-width: 700px) {
+  .alerts-form { grid-template-columns: 1fr; }
+}
+
+.alerts-results { max-width: 900px; margin: 0 auto; }
+
+.weather-summary {
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.weather-summary h3 { font-size: 1rem; font-weight: 700; }
+
+.weather-pills { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.w-pill {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 14px;
+  background: rgba(76,175,80,0.08);
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.alerts-header { margin-bottom: 16px; }
+.alerts-header h2 { font-size: 1.2rem; font-weight: 700; color: var(--text); }
+
+.alerts-grid { display: flex; flex-direction: column; gap: 16px; }
+
+.alert-card {
+  padding: 24px;
+  border-left: 5px solid transparent;
+}
+
+.alert-card.severity-red    { border-left-color: #D32F2F; }
+.alert-card.severity-orange { border-left-color: #FF8F00; }
+.alert-card.severity-green  { border-left-color: #2E7D32; }
+
+.alert-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.alert-card-header h3 { font-size: 1.1rem; font-weight: 700; }
+.alert-disease { font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; display: block; }
+
+.alert-section { margin-bottom: 12px; }
+.alert-section strong { display: block; font-size: 0.85rem; margin-bottom: 4px; }
+.alert-section p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; margin: 0; }
+
+.no-alerts {
+  padding: 60px; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+
+.no-alerts h3 { font-size: 1.2rem; font-weight: 700; }
+.no-alerts p  { color: var(--text-muted); font-size: 0.9rem; }

@@ -1,0 +1,73 @@
+/* Shared page header hero */
+.page-hero {
+  padding: 60px 0 48px;
+  text-align: center;
+  color: white;
+}
+
+.page-hero-icon {
+  font-size: 3.5rem;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+}
+
+.page-hero h1 {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.page-hero p {
+  font-size: 1.05rem;
+  opacity: 0.85;
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* Card with title */
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Empty state */
+.empty-state {
+  padding: 60px 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.empty-state h3 { font-size: 1.2rem; font-weight: 700; }
+.empty-state p  { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; max-width: 300px; }
+
+/* Mini spinner */
+.mini-spinner {
+  display: inline-block;
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Unit badge */
+.unit-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  background: rgba(76,175,80,0.1);
+  color: var(--secondary);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
