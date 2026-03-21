@@ -15,7 +15,8 @@ sc = pickle.load(open(os.path.join(BASE_DIR, 'standscaler.pkl'), 'rb'))
 ms = pickle.load(open(os.path.join(BASE_DIR, 'minmaxscaler.pkl'), 'rb'))
 
 def home(request):
-    return render(request, 'crop_recommendation/index.html')
+    return JsonResponse({"status": "Agrizone API is online", "message": "Welcome to the backend. Use the React frontend to interact with the models."})
+
 
 def about(request):
     return render(request, 'crop_recommendation/about.html')
