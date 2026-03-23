@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import API_BASE from '../api/config';
-import './PageCommon.css';
-import './Weather.css';
 
 const WEATHER_ICONS = {
   '01d': '☀️', '01n': '🌙', '02d': '⛅', '02n': '🌥️',
@@ -10,17 +8,17 @@ const WEATHER_ICONS = {
 };
 
 export default function Weather() {
-  const [city,    setCity]    = useState('');
+  const [city, setCity] = useState('');
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error,   setError]   = useState('');
+  const [error, setError] = useState('');
 
   const fetchWeather = async e => {
     e.preventDefault();
     if (!city.trim()) return;
     setLoading(true); setError(''); setWeather(null);
     try {
-      const res  = await fetch(`${API_BASE}/weather/get-weather/`, {
+      const res = await fetch(`${API_BASE}/weather/get-weather/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ city }),
@@ -29,7 +27,7 @@ export default function Weather() {
       if (data.success) setWeather(data);
       else setError(data.error || 'Could not get weather data.');
     } catch {
-      setError('Server unreachable. Make sure Django is running on port 8000.');
+      setError('Server unreachable. Make sure Django is running.');
     } finally {
       setLoading(false);
     }
@@ -38,116 +36,100 @@ export default function Weather() {
   const icon = weather ? (WEATHER_ICONS[weather.icon] || '🌤️') : '';
 
   return (
-    <div className="page">
-      <div className="page-hero" style={{ background: 'linear-gradient(135deg, #0277BD, #29B6F6)' }}>
-        <div className="container">
-          <div className="page-hero-icon">🌤️</div>
-          <h1>Weather Intelligence</h1>
-          <p>Get real-time weather data with agriculture-focused insights for any city.</p>
+    <div className="page-wrapper container" style={{ paddingBottom: '100px' }}>
+      <div style={{ padding: '60px 0' }}>
+        <h1 style={{ fontSize: '3.5rem', marginBottom: '12px' }}>Weather <span style={{ color: 'var(--primary)' }}>Intelligence</span></h1>
+        <p className="text-muted" style={{ fontSize: '1.2rem', marginBottom: '48px' }}>
+          Real-time hyper-local weather alerts and farming strategies for any location.
+        </p>
+
+        {/* Floating Search */}
+        <div className="card-glass" style={{ maxWidth: '700px', margin: '0 auto 60px', padding: '16px' }}>
+          <form onSubmit={fetchWeather} style={{ display: 'flex', gap: '12px' }}>
+            <input
+              className="form-input"
+              placeholder="Enter city name (e.g. Mumbai, Berlin...)"
+              value={city}
+              onChange={e => setCity(e.target.value)}
+              required
+            />
+            <button className="btn btn-primary" type="submit" disabled={loading} style={{ minWidth: '140px' }}>
+              {loading ? 'Fetching...' : 'Get Data'}
+            </button>
+          </form>
+          {error && <p style={{ color: 'var(--error)', marginTop: '12px', textAlign: 'center' }}>{error}</p>}
         </div>
-      </div>
-
-      <div className="container" style={{ padding: '60px 24px' }}>
-        {/* Search */}
-        <form onSubmit={fetchWeather} className="weather-search glass" style={{ maxWidth: 600, margin: '0 auto 40px' }}>
-          <input
-            className="form-control"
-            placeholder="Enter city name (e.g. Mumbai, Delhi, London…)"
-            value={city}
-            onChange={e => setCity(e.target.value)}
-            required
-          />
-          <button className="btn btn-primary" type="submit" disabled={loading}>
-            {loading ? <><span className="mini-spinner" /> Fetching…</> : '🔍 Search'}
-          </button>
-        </form>
-
-        {error && <div className="alert alert-danger" style={{ maxWidth: 600, margin: '0 auto 24px' }}>{error}</div>}
 
         {weather && (
-          <div className="weather-grid animate-fade-up">
-            {/* Main card */}
-            <div className="weather-main card">
-              {weather.demo && (
-                <div className="demo-notice">⚠️ Demo data — add a real WeatherAPI key in `.env`</div>
-              )}
-              <div className="weather-header">
+          <div className="grid-2 animate-up">
+            {/* Main Weather */}
+            <div className="card-glass" style={{ background: 'var(--secondary)', color: 'white' }}>
+              <div className="flex-between" style={{ marginBottom: '40px' }}>
                 <div>
-                  <div className="weather-city">{weather.city}</div>
-                  <div className="weather-country">{weather.country}</div>
-                  <div className="weather-desc">{weather.description}</div>
+                  <h2 style={{ color: 'white', fontSize: '2.5rem', marginBottom: '4px' }}>{weather.city}</h2>
+                  <p style={{ color: '#94a3b8', fontSize: '1.1rem' }}>{weather.country}</p>
+                  <p style={{ color: 'var(--primary-light)', fontWeight: '700', textTransform: 'uppercase', marginTop: '12px' }}>{weather.description}</p>
                 </div>
-                <div className="weather-big-icon">{icon}</div>
+                <div style={{ fontSize: '5rem' }}>{icon}</div>
               </div>
-              <div className="weather-temp">{weather.temperature}°C</div>
-              {weather.feels_like && (
-                <div className="weather-feels">Feels like {weather.feels_like}°C</div>
-              )}
 
-              <div className="weather-metrics">
+              <div style={{ fontSize: '6rem', fontWeight: '800', lineHeight: 1, marginBottom: '40px' }}>{weather.temperature}°C</div>
+
+              <div className="grid-3">
                 {[
                   { icon: '💧', label: 'Humidity', val: `${weather.humidity}%` },
                   { icon: '🌬️', label: 'Wind', val: `${weather.wind_speed} m/s` },
-                  { icon: '👁️', label: 'Visibility', val: `${weather.visibility ?? '—'} km` },
                   { icon: '📊', label: 'Pressure', val: `${weather.pressure} hPa` },
                 ].map(m => (
-                  <div key={m.label} className="metric-pill">
-                    <span>{m.icon}</span>
-                    <div>
-                      <div className="metric-val">{m.val}</div>
-                      <div className="metric-label">{m.label}</div>
-                    </div>
+                  <div key={m.label} style={{ background: 'rgba(255,255,255,0.05)', padding: '16px', borderRadius: '12px' }}>
+                    <div style={{ fontSize: '1.5rem', marginBottom: '4px' }}>{m.icon}</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: '700' }}>{m.val}</div>
+                    <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>{m.label}</div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Farming advice */}
-            <div className="weather-advice card">
-              <h3>🌾 Farming Advice</h3>
-              <div className="advice-list">
+            {/* Farming Strategy */}
+            <div className="card-glass">
+              <h3 style={{ marginBottom: '24px' }}>Farming Strategy</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {weather.humidity > 80 && (
-                  <div className="advice-item alert-warning">
-                    <strong>⚠️ High Humidity</strong>
-                    <p>Watch for fungal diseases. Consider preventive fungicide application.</p>
+                  <div style={{ padding: '20px', background: '#fffbeb', borderLeft: '4px solid #f59e0b', borderRadius: '8px' }}>
+                    <strong style={{ display: 'block', color: '#92400e', marginBottom: '4px' }}>⚠️ Fungal Disease Risk</strong>
+                    <p style={{ fontSize: '0.9rem', color: '#b45309' }}>Humidity is very high. Monitor for pests and avoid morning watering.</p>
                   </div>
                 )}
                 {weather.temperature > 38 && (
-                  <div className="advice-item alert-danger">
-                    <strong>🌡️ Heat Stress Risk</strong>
-                    <p>Irrigate early morning/evening to reduce crop heat stress.</p>
+                  <div style={{ padding: '20px', background: '#fef2f2', borderLeft: '4px solid #ef4444', borderRadius: '8px' }}>
+                    <strong style={{ display: 'block', color: '#991b1b', marginBottom: '4px' }}>🌡️ Heat Stress Warning</strong>
+                    <p style={{ fontSize: '0.9rem', color: '#b91c1c' }}>Crops may suffer from dehydration. Plan for additional irrigation.</p>
                   </div>
                 )}
-                {weather.temperature < 10 && (
-                  <div className="advice-item alert-info">
-                    <strong>❄️ Cold Alert</strong>
-                    <p>Protect sensitive crops with mulching or row covers.</p>
-                  </div>
-                )}
-                {weather.wind_speed > 10 && (
-                  <div className="advice-item alert-warning">
-                    <strong>💨 Strong Winds</strong>
-                    <p>Avoid pesticide spraying — it will drift. Provide staking support.</p>
-                  </div>
-                )}
-                <div className="advice-item alert-success">
-                  <strong>✅ General Tip</strong>
-                  <p>
+                <div style={{ padding: '20px', background: '#f0fdf4', borderLeft: '4px solid #10b981', borderRadius: '8px' }}>
+                  <strong style={{ display: 'block', color: '#065f46', marginBottom: '4px' }}>✅ General Condition</strong>
+                  <p style={{ fontSize: '0.9rem', color: '#047857' }}>
                     {weather.temperature >= 20 && weather.temperature <= 35
-                      ? 'Conditions look good for most field activities today.'
-                      : 'Monitor conditions closely before starting field work.'}
+                      ? 'Optimal conditions for field work and spraying.'
+                      : 'Proceed with caution based on individual crop sensitivities.'}
                   </p>
                 </div>
+              </div>
+
+              <div style={{ marginTop: '32px', padding: '24px', background: '#f1f5f9', borderRadius: '16px' }}>
+                <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                  Data provided by OpenWeather Sytems. Updated in real-time.
+                </p>
               </div>
             </div>
           </div>
         )}
 
-        {!weather && !loading && !error && (
-          <div className="empty-state card" style={{ maxWidth: 500, margin: '0 auto' }}>
-            <div style={{ fontSize: '4rem' }}>🌤️</div>
-            <h3>Search for a city above</h3>
-            <p>Weather data includes temperature, humidity, wind speed, and personalized farming recommendations.</p>
+        {!weather && !loading && (
+          <div className="card-glass" style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center', opacity: 0.6 }}>
+            <div style={{ fontSize: '5rem', marginBottom: '24px' }}>📍</div>
+            <h3>Select your location</h3>
+            <p className="text-muted">Enter a city name above to deploy high-precision weather sensors for your farm.</p>
           </div>
         )}
       </div>

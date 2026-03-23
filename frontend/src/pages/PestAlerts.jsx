@@ -1,11 +1,7 @@
 import { useState } from 'react';
 import API_BASE from '../api/config';
-import './PageCommon.css';
-import './PestAlerts.css';
 
 const CROPS = ['Rice', 'Wheat', 'Tomato', 'Cotton', 'Maize', 'Sugarcane', 'Potato', 'Onion'];
-
-const SEVERITY_MAP = { High: 'red', Medium: 'orange', Low: 'green' };
 
 export default function PestAlerts() {
   const [crop,     setCrop]     = useState('');
@@ -23,120 +19,103 @@ export default function PestAlerts() {
       if (json.success) setData(json);
       else setError(json.error || 'Failed to fetch alerts.');
     } catch {
-      setError('Server unreachable. Make sure Django is running on port 8000.');
+      setError('Server unreachable. Ensure Django is running.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="page">
-      <div className="page-hero" style={{ background: 'linear-gradient(135deg, #E65100, #FF8F00)' }}>
-        <div className="container">
-          <div className="page-hero-icon">⚠️</div>
-          <h1>Pest & Disease Alerts</h1>
-          <p>Weather-based alerts for pests and diseases affecting your specific crop and region.</p>
+    <div className="page-wrapper container" style={{ paddingBottom: '100px' }}>
+      <div style={{ padding: '60px 0' }}>
+        <h1 style={{ fontSize: '3.5rem', marginBottom: '12px' }}>Pest <span style={{ color: 'var(--primary)' }}>Alerts</span></h1>
+        <p className="text-muted" style={{ fontSize: '1.2rem', marginBottom: '48px' }}>
+          Real-time hyper-local risk assessment based on environmental conditions.
+        </p>
+
+        {/* Command Bar */}
+        <div className="card-glass" style={{ marginBottom: '60px' }}>
+           <form onSubmit={fetch_} style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', alignItems: 'flex-end' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', marginBottom: '8px', color: 'var(--text-muted)' }}>Target Crop</label>
+                <select className="form-input" value={crop} onChange={e => setCrop(e.target.value)} required>
+                   <option value="">Select Crop</option>
+                   {CROPS.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', marginBottom: '8px', color: 'var(--text-muted)' }}>Location</label>
+                <input className="form-input" placeholder="e.g. Punjab, Haryana" value={location} onChange={e => setLocation(e.target.value)} required />
+              </div>
+              <button className="btn btn-primary" type="submit" disabled={loading} style={{ height: '56px' }}>
+                 {loading ? 'Scanning Region...' : 'Fetch Risk Report'}
+              </button>
+           </form>
+           {error && <p style={{ color: 'var(--error)', marginTop: '16px', fontWeight: '600' }}>{error}</p>}
         </div>
-      </div>
 
-      <div className="container" style={{ padding: '60px 24px' }}>
-        {/* Search form */}
-        <form onSubmit={fetch_} className="alerts-form card">
-          <div>
-            <label className="form-label">Select Crop</label>
-            <select className="form-control" value={crop} onChange={e => setCrop(e.target.value)} required>
-              <option value="">-- Choose a crop --</option>
-              {CROPS.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="form-label">Location / City</label>
-            <input
-              className="form-control"
-              placeholder="e.g. Punjab, Nashik, Haryana"
-              value={location}
-              onChange={e => setLocation(e.target.value)}
-              required
-            />
-          </div>
-          <button className="btn btn-primary" type="submit" disabled={loading}>
-            {loading ? <><span className="mini-spinner" /> Checking…</> : '🔍 Get Alerts'}
-          </button>
-        </form>
-
-        {error && <div className="alert alert-danger" style={{ maxWidth: 800, margin: '16px auto' }}>{error}</div>}
-
-        {/* Results */}
         {data && (
-          <div className="alerts-results animate-fade-up">
-            {/* Weather summary */}
+          <div className="animate-up">
+            {/* Field Status */}
             {data.weather && (
-              <div className="weather-summary card">
-                <h3>🌤️ Current Conditions — {location}</h3>
-                <div className="weather-pills">
-                  <div className="w-pill"><span>🌡️</span>{data.weather.temp}°C</div>
-                  <div className="w-pill"><span>💧</span>{data.weather.humidity}% humidity</div>
-                  <div className="w-pill"><span>🌥️</span>{data.weather.description}</div>
-                </div>
+              <div className="card-glass" style={{ background: 'var(--secondary)', color: 'white', marginBottom: '40px' }}>
+                 <div className="flex-between">
+                    <div>
+                       <h3 style={{ color: 'white', marginBottom: '4px' }}>Field Environmental Status</h3>
+                       <p style={{ opacity: 0.6, fontSize: '0.9rem' }}>Analyzed data for {location}</p>
+                    </div>
+                    <div className="flex-between" style={{ gap: '32px' }}>
+                       <div style={{ textAlign: 'center' }}><div style={{ fontSize: '1.5rem', fontWeight: '800' }}>{data.weather.temp}°C</div><p style={{ fontSize: '0.7rem', opacity: 0.6 }}>TEMP</p></div>
+                       <div style={{ textAlign: 'center' }}><div style={{ fontSize: '1.5rem', fontWeight: '800' }}>{data.weather.humidity}%</div><p style={{ fontSize: '0.7rem', opacity: 0.6 }}>HUMIDITY</p></div>
+                    </div>
+                 </div>
               </div>
             )}
 
-            {/* Alerts */}
+            {/* Alerts Grid */}
             {data.alerts.length === 0 ? (
-              <div className="no-alerts card">
-                <div style={{ fontSize: '3rem' }}>✅</div>
-                <h3>No active alerts</h3>
-                <p>Current weather conditions are safe for <strong>{crop}</strong> cultivation. Keep monitoring regularly.</p>
+              <div className="card-glass" style={{ textAlign: 'center', padding: '60px' }}>
+                 <div style={{ fontSize: '4rem', marginBottom: '20px' }}>✅</div>
+                 <h2 style={{ marginBottom: '12px' }}>No Active Threats</h2>
+                 <p className="text-muted">Current ecosystem conditions are optimal for <strong>{crop}</strong>. No immediate action required.</p>
               </div>
             ) : (
-              <>
-                <div className="alerts-header">
-                  <h2>🚨 {data.alerts.length} Alert{data.alerts.length !== 1 ? 's' : ''} Found for {crop}</h2>
-                </div>
-                <div className="alerts-grid">
-                  {data.alerts.map((a, i) => (
-                    <div key={i} className={`alert-card card severity-${(SEVERITY_MAP[a.severity] || 'orange')}`}>
-                      <div className="alert-card-header">
-                        <div>
-                          {a.pest_name && <h3>{a.pest_name}</h3>}
-                          {a.disease_name && <span className="alert-disease">{a.disease_name}</span>}
-                        </div>
-                        <span className={`badge badge-${SEVERITY_MAP[a.severity] || 'orange'}`}>
-                          {a.severity || 'Medium'} Risk
-                        </span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                 <h2 style={{ fontSize: '2rem' }}>⚠️ {data.alerts.length} Active High-Risk Threats</h2>
+                 <div className="grid-2">
+                    {data.alerts.map((a, i) => (
+                      <div key={i} className="card-glass" style={{ borderLeft: '6px solid var(--error)' }}>
+                         <div className="flex-between" style={{ marginBottom: '24px' }}>
+                            <h3 style={{ fontSize: '1.5rem' }}>{a.pest_name || a.disease_name}</h3>
+                            <span style={{ padding: '6px 14px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--error)', borderRadius: '50px', fontWeight: '800', fontSize: '0.7rem', textTransform: 'uppercase' }}>
+                               {a.severity} RISK
+                            </span>
+                         </div>
+                         
+                         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                            <div>
+                               <label style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Symptoms</label>
+                               <p style={{ fontSize: '0.95rem', marginTop: '4px' }}>{a.symptoms}</p>
+                            </div>
+                            <div>
+                               <label style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Treatment</label>
+                               <p style={{ fontSize: '0.95rem', marginTop: '4px', color: 'var(--primary-dark)', fontWeight: '600' }}>{a.treatment}</p>
+                            </div>
+                         </div>
                       </div>
-                      {a.symptoms && (
-                        <div className="alert-section">
-                          <strong>🔍 Symptoms</strong>
-                          <p>{a.symptoms}</p>
-                        </div>
-                      )}
-                      {a.prevention && (
-                        <div className="alert-section">
-                          <strong>🛡️ Prevention</strong>
-                          <p>{a.prevention}</p>
-                        </div>
-                      )}
-                      {a.treatment && (
-                        <div className="alert-section">
-                          <strong>💊 Treatment</strong>
-                          <p>{a.treatment}</p>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </>
+                    ))}
+                 </div>
+              </div>
             )}
           </div>
         )}
 
-        {!data && !loading && !error && (
-          <div className="empty-state card" style={{ maxWidth: 500, margin: '0 auto' }}>
-            <div style={{ fontSize: '4rem' }}>⚠️</div>
-            <h3>Select a crop and location</h3>
-            <p>We'll check current weather conditions and match them against known pest and disease risk patterns.</p>
-          </div>
+        {!data && !loading && (
+           <div className="card-glass" style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center', opacity: 0.6 }}>
+              <div style={{ fontSize: '5rem', marginBottom: '24px' }}>📍</div>
+              <h3>Select Crop & Region</h3>
+              <p className="text-muted">Select your target crop and location to deploy the pest surveillance engine.</p>
+           </div>
         )}
       </div>
     </div>

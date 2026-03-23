@@ -1,156 +1,117 @@
 import { Link } from 'react-router-dom';
-import './Home.css';
+import heroImg from '../assets/hero_ultra.png';
 
 const FEATURES = [
-  {
-    icon: '🌾',
-    title: 'Crop Recommendation',
-    desc: 'AI-powered crop suggestions based on soil NPK, pH, temperature, and rainfall data.',
-    link: '/crop',
-    color: '#1B5E20',
-  },
-  {
-    icon: '🌤️',
-    title: 'Weather Intelligence',
-    desc: 'Real-time weather updates with farming-specific insights for better planning.',
-    link: '/weather',
-    color: '#0277BD',
-  },
-  {
-    icon: '🔬',
-    title: 'Disease Detection',
-    desc: 'Upload plant photos for instant AI-based disease identification and treatment advice.',
-    link: '/disease',
-    color: '#558B2F',
-  },
-  {
-    icon: '🤖',
-    title: 'AI Farm Assistant',
-    desc: 'Conversational AI expert for fertilizer, pest control, and seasonal farming guidance.',
-    link: '/chatbot',
-    color: '#4527A0',
-  },
-  {
-    icon: '⚠️',
-    title: 'Pest Alerts',
-    desc: 'Weather-based pest and disease alerts for your specific location and crop.',
-    link: '/pest-alerts',
-    color: '#E65100',
-  },
-  {
-    icon: '📬',
-    title: 'Contact & Support',
-    desc: 'Reach out for expert support, partnership inquiries, or custom farming solutions.',
-    link: '/contact',
-    color: '#00695C',
-  },
-];
-
-const STATS = [
-  { value: '22+',   label: 'Crop Types' },
-  { value: '95%',   label: 'Prediction Accuracy' },
-  { value: '500+',  label: 'Farmers Helped' },
-  { value: '24/7',  label: 'AI Support' },
+  { icon: '🌾', title: 'Crop Advisor', desc: 'Predict best crops using NPK, pH & local weather data.', link: '/crop' },
+  { icon: '🌤️', title: 'Smart Weather', desc: 'Real-time hyper-local weather insights for planned farming.', link: '/weather' },
+  { icon: '🔬', title: 'Disease Scan', desc: 'AI-powered image analysis for instant plant health diagnostics.', link: '/disease' },
+  { icon: '🤖', title: 'AI Assistant', desc: 'Your 24/7 personal farming consultant powered by LLMs.', link: '/chatbot' },
+  { icon: '⚠️', title: 'Risk Alerts', desc: 'Automated pest and outbreak warnings for your specific region.', link: '/pest-alerts' },
+  { icon: '📞', title: 'Support', desc: 'Expert assistance for hardware and setup.', link: '/contact' },
 ];
 
 export default function Home() {
   return (
-    <div className="home">
+    <div className="page-wrapper" style={{ paddingTop: 0 }}>
       {/* ── Hero ─────────────────────────────────── */}
-      <section className="hero">
-        <div className="hero-particles" aria-hidden="true">
-          {[...Array(20)].map((_, i) => (
-            <span key={i} className="particle" style={{
-              '--x': `${Math.random() * 100}%`,
-              '--y': `${Math.random() * 100}%`,
-              '--d': `${2 + Math.random() * 4}s`,
-              '--s': `${4 + Math.random() * 12}px`,
-            }} />
-          ))}
-        </div>
-        <div className="hero-overlay" />
-        <div className="hero-content container">
-          <div className="hero-badge animate-fade-up">🌿 Smart Farming Platform</div>
-          <h1 className="hero-title animate-fade-up" style={{ animationDelay: '0.1s' }}>
-            Grow Smarter
-            <br />
-            <span>with AI-Powered</span>
-            <br />
-            Agriculture
-          </h1>
-          <p className="hero-desc animate-fade-up" style={{ animationDelay: '0.2s' }}>
-            Harness the power of artificial intelligence for crop recommendations,
-            disease detection, weather intelligence, and expert farming guidance — all in one place.
-          </p>
-          <div className="hero-actions animate-fade-up" style={{ animationDelay: '0.3s' }}>
-            <Link to="/crop" className="btn btn-white">
-              🌾 Get Crop Advice
-            </Link>
-            <Link to="/disease" className="btn btn-outline-white">
-              🔬 Detect Disease
-            </Link>
-          </div>
-        </div>
-
-        {/* Floating card */}
-        <div className="hero-card animate-float">
-          <div className="hero-card-header">🌱 Today's Insights</div>
-          <div className="hero-card-row"><span>Recommended</span><strong>Wheat · Rice · Maize</strong></div>
-          <div className="hero-card-row"><span>Health Score</span><strong>✅ Excellent</strong></div>
-          <div className="hero-card-row"><span>AI Confidence</span><strong>94.5%</strong></div>
-        </div>
-      </section>
-
-      {/* ── Stats ────────────────────────────────── */}
-      <section className="stats-strip container">
-        {STATS.map(s => (
-          <div key={s.label} className="stat-item">
-            <span className="stat-value">{s.value}</span>
-            <span className="stat-label">{s.label}</span>
-          </div>
-        ))}
-      </section>
-
-      {/* ── Features ─────────────────────────────── */}
-      <section className="section features-section container">
-        <div className="text-center" style={{ marginBottom: 56 }}>
-          <div className="badge badge-green" style={{ marginBottom: 12 }}>All-in-One Platform</div>
-          <h2 className="section-title">Everything a <span className="gradient-text">Modern Farmer</span> Needs</h2>
-          <p className="section-subtitle" style={{ margin: '0 auto' }}>
-            From soil analysis to pest alerts — Agrizone puts expert-level agricultural intelligence in your hands.
-          </p>
-        </div>
-        <div className="features-grid">
-          {FEATURES.map(f => (
-            <Link key={f.title} to={f.link} className="feature-card card" style={{ '--accent-c': f.color }}>
-              <div className="feature-icon" style={{ background: `${f.color}18`, color: f.color }}>
-                {f.icon}
-              </div>
-              <h3>{f.title}</h3>
-              <p>{f.desc}</p>
-              <span className="feature-link">Explore →</span>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* ── CTA ──────────────────────────────────── */}
-      <section className="cta-section">
-        <div className="cta-inner container">
-          <h2>Ready to transform your farm?</h2>
-          <p>Join thousands of farmers who make smarter decisions with Agrizone AI.</p>
-          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center', marginTop: 32 }}>
-            <Link to="/crop" className="btn btn-white">Start for Free</Link>
-            <Link to="/chatbot" className="btn btn-outline-white">Talk to AI →</Link>
+      <section className="hero" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '120px 0 80px' }}>
+        <img src={heroImg} className="hero-bg" alt="Cinematic Sustainable Farm" style={{ opacity: 0.25 }} />
+        <div className="hero-overlay" style={{ background: 'radial-gradient(circle at 30% 50%, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.4) 60%, transparent 100%)' }} />
+        
+        <div className="container" style={{ position: 'relative', zIndex: 10, width: '100%' }}>
+          <div className="animate-up" style={{ maxWidth: '900px' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', background: 'rgba(16, 185, 129, 0.12)', padding: '10px 20px', borderRadius: '100px', border: '1px solid rgba(16, 185, 129, 0.25)', marginBottom: '32px', backdropFilter: 'blur(12px)' }}>
+              <span className="pulse-dot"></span>
+              <span style={{ fontSize: '0.75rem', fontWeight: '800', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--primary-light)' }}>Agri-Intelligence • v4.0 Active</span>
+            </div>
+            
+            <h1 style={{ fontSize: 'clamp(3.5rem, 10vw, 6rem)', lineHeight: '1.05', fontWeight: '900', marginBottom: '32px', letterSpacing: '-0.04em', color: 'white' }}>
+              Cultivating the <br />
+              <span style={{ 
+                background: 'linear-gradient(to right, var(--primary-light), var(--primary))',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                filter: 'drop-shadow(0 0 20px rgba(16, 185, 129, 0.3))'
+              }}>Digital Frontier.</span>
+            </h1>
+            
+            <p style={{ fontSize: '1.5rem', lineHeight: '1.6', color: '#cbd5e1', marginBottom: '56px', maxWidth: '650px', fontWeight: '400' }}>
+              Experience the convergence of AI, IoT, and precision agronomy to redefine global food security with data-driven resilience.
+            </p>
+            
+            <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+              <Link to="/crop" className="btn btn-primary" style={{ padding: '22px 56px', fontSize: '1.1rem', borderRadius: '100px' }}>
+                Launch Command Center
+                <span style={{ fontSize: '1.2rem' }}>→</span>
+              </Link>
+              <Link to="/chatbot" className="btn btn-glass" style={{ padding: '22px 56px', fontSize: '1.1rem', borderRadius: '100px' }}>
+                Consult AI Agent
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ── Footer ───────────────────────────────── */}
-      <footer className="footer">
+      {/* ── Feature Ecosystem (Bento Style) ──────── */}
+      <section className="section" style={{ background: '#f8fafc', position: 'relative', zIndex: 1, marginTop: '-40px', borderRadius: '40px 40px 0 0' }}>
         <div className="container">
-          <p>© 2024 Agrizone · Built with ❤️ for farmers worldwide</p>
+          <div style={{ textAlign: 'center', marginBottom: '80px' }}>
+            <h2 style={{ fontSize: '3.5rem', marginBottom: '20px', letterSpacing: '-0.03em' }}>Our <span style={{ color: 'var(--primary)' }}>Digital</span> Ecosystem</h2>
+            <p className="text-muted" style={{ fontSize: '1.25rem', maxWidth: '700px', margin: '0 auto' }}>
+              Quantum-grade tools designed for the next generation of precision agriculture.
+            </p>
+          </div>
+
+          <div className="grid-bento animate-up">
+            {FEATURES.map((f, i) => (
+              <Link key={f.title} to={f.link} className={`bento-card card-size-${i % 3}`} style={{ textDecoration: 'none' }}>
+                <div className="bento-icon">{f.icon}</div>
+                <div className="bento-content">
+                  <h3>{f.title}</h3>
+                  <p>{f.desc}</p>
+                  <div className="bento-footer">
+                    <span>Deploy Module</span>
+                    <span className="arrow">→</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
+      </section>
+
+      {/* ── Precision Dashboard Metrics ─────────── */}
+      <section className="section" style={{ background: 'var(--secondary)', overflow: 'hidden', position: 'relative' }}>
+        <div style={{ position: 'absolute', inset: 0, opacity: 0.1, background: 'radial-gradient(circle at 70% 30%, var(--primary), transparent 70%)' }} />
+        <div className="container" style={{ position: 'relative', zIndex: 10 }}>
+          <div className="flex-between" style={{ gap: '100px' }}>
+            <div style={{ maxWidth: '500px' }}>
+              <h2 style={{ color: 'white', fontSize: '3.5rem', marginBottom: '24px', lineHeight: '1.1' }}>
+                Empirical <br /><span style={{ color: 'var(--primary-light)' }}>Precision</span>.
+              </h2>
+              <p style={{ color: '#94a3b8', fontSize: '1.25rem' }}>
+                Eliminate guesswork with real-time telemetry and predictive modeling updated every 12 seconds.
+              </p>
+            </div>
+            
+            <div className="metrics-grid">
+              {[
+                { val: '98.4%', label: 'Prediction Accuracy' },
+                { val: '1.2ms', label: 'Average Latency' },
+                { val: '24/7', label: 'Edge Availability' }
+              ].map(stat => (
+                <div key={stat.label} className="metric-item">
+                  <div className="metric-value">{stat.val}</div>
+                  <div className="metric-label">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer style={{ padding: '80px 0', textAlign: 'center', background: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
+         <p className="text-muted" style={{ fontWeight: '500' }}>© 2026 AgriZone Systems International · Pioneering the Future of Food.</p>
       </footer>
     </div>
   );
