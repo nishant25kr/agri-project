@@ -1,78 +1,54 @@
 import { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import './Navbar.css';
 
 const NAV_LINKS = [
   { to: '/',            label: 'Home' },
-  { to: '/crop',        label: 'Crop Advisor' },
+  { to: '/crop',        label: 'Advisor' },
   { to: '/weather',     label: 'Weather' },
-  { to: '/disease',     label: 'Disease Detection' },
-  { to: '/chatbot',     label: 'AI Assistant' },
-  { to: '/pest-alerts', label: 'Pest Alerts' },
-  { to: '/about',       label: 'About' },
-  { to: '/contact',     label: 'Contact' },
+  { to: '/disease',     label: 'Disease' },
+  { to: '/chatbot',     label: 'AI Chat' },
+  { to: '/pest-alerts', label: 'Alerts' },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Close mobile menu on route change
-  useEffect(() => { setMenuOpen(false); }, [location]);
-
   return (
-    <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
-      <div className="nav-container">
-        {/* Brand */}
-        <Link to="/" className="nav-brand">
-          <span className="nav-brand-icon">🌱</span>
-          <span>Agrizone</span>
-        </Link>
+    <nav className="nav-glass" style={{ 
+      top: scrolled ? '12px' : '24px',
+      width: scrolled ? '95%' : '90%',
+      transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+    }}>
+      <Link to="/" className="nav-brand">
+        <span style={{ fontSize: '1.8rem' }}>🌿</span>
+        <span style={{ letterSpacing: '-1px' }}>AgriZone</span>
+      </Link>
 
-        {/* Desktop Links */}
-        <ul className="nav-links">
-          {NAV_LINKS.map(({ to, label }) => (
-            <li key={to}>
-              <NavLink
-                to={to}
-                end={to === '/'}
-                className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
-              >
-                {label}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
-
-        {/* Hamburger */}
-        <button
-          className={`hamburger${menuOpen ? ' open' : ''}`}
-          onClick={() => setMenuOpen(prev => !prev)}
-          aria-label="Toggle menu"
-        >
-          <span /><span /><span />
-        </button>
-      </div>
-
-      {/* Mobile Drawer */}
-      <div className={`mobile-drawer${menuOpen ? ' open' : ''}`}>
+      <ul className="nav-links">
         {NAV_LINKS.map(({ to, label }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={to === '/'}
-            className={({ isActive }) => `mobile-nav-link${isActive ? ' active' : ''}`}
-          >
-            {label}
-          </NavLink>
+          <li key={to}>
+            <NavLink
+              to={to}
+              end={to === '/'}
+              className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+            >
+              {label}
+            </NavLink>
+          </li>
         ))}
+      </ul>
+      
+      <div style={{ display: 'flex', gap: '12px' }}>
+        <Link to="/contact" className="btn btn-primary" style={{ padding: '10px 20px', fontSize: '0.85rem' }}>
+          Get Help
+        </Link>
       </div>
     </nav>
   );

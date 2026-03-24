@@ -1,21 +1,18 @@
 import { useState, useRef, useEffect } from 'react';
 import API_BASE from '../api/config';
-import './PageCommon.css';
-import './Chatbot.css';
 
 const QUICK_QUESTIONS = [
   'Best fertilizer for wheat?',
   'How to treat tomato blight?',
   'Crops to plant in November?',
   'Organic pest control methods?',
-  'Sugarcane pesticide advice?',
 ];
 
 export default function Chatbot() {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      text: "👋 Hi! I'm AgriGPT, your AI farming expert. Ask me anything about crops, fertilizers, diseases, pests, or seasonal advice!",
+      text: "👋 Hi! I'm your AgriZone AI expert. Ask me anything about soil, weather, disease treatment, or seasonal farming strategies!",
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
@@ -46,75 +43,89 @@ export default function Chatbot() {
         time: data.timestamp || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       }]);
     } catch {
-      setMessages(prev => [...prev, { role: 'assistant', text: '⚠️ Server unreachable. Make sure Django is running on port 8000.', time: '' }]);
+      setMessages(prev => [...prev, { role: 'assistant', text: '⚠️ Connection Error. Ensure your backend is responding.', time: '' }]);
     } finally {
       setLoading(false);
     }
   };
 
-  const onKey = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } };
-
   return (
-    <div className="page">
-      <div className="page-hero" style={{ background: 'linear-gradient(135deg, #4527A0, #7B1FA2)' }}>
-        <div className="container">
-          <div className="page-hero-icon">🤖</div>
-          <h1>AI Farm Assistant</h1>
-          <p>Powered by Gemini AI — your interactive agricultural expert, 24/7.</p>
-        </div>
+    <div className="page-wrapper container" style={{ maxWidth: '900px', display: 'flex', flexDirection: 'column', height: '100vh', paddingBottom: '40px' }}>
+      <div style={{ padding: '60px 0 20px' }}>
+        <h1 style={{ fontSize: '2.5rem', marginBottom: '8px' }}>AI Farm <span style={{ color: 'var(--primary)' }}>Assistant</span></h1>
+        <p className="text-muted">Powered by Intelligence. Built for Farmers.</p>
       </div>
 
-      <div className="container chat-container">
-        {/* Quick questions */}
-        <div className="quick-qs">
-          {QUICK_QUESTIONS.map(q => (
-            <button key={q} className="quick-btn" onClick={() => send(q)} disabled={loading}>
-              {q}
-            </button>
-          ))}
-        </div>
-
-        {/* Chat window */}
-        <div className="chat-window card">
-          <div className="messages-area">
+      <div className="card-glass" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: 0 }}>
+         {/* Chat Area */}
+         <div style={{ flex: 1, overflowY: 'auto', padding: '32px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {messages.map((m, i) => (
-              <div key={i} className={`message ${m.role}`}>
-                {m.role === 'assistant' && <div className="avatar">🤖</div>}
-                <div className="bubble">
-                  <div className="bubble-text">{m.text}</div>
-                  {m.time && <div className="bubble-time">{m.time}</div>}
+              <div key={i} style={{ 
+                alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start',
+                maxWidth: '80%',
+                display: 'flex',
+                gap: '12px',
+                flexDirection: m.role === 'user' ? 'row-reverse' : 'row'
+              }}>
+                <div style={{ 
+                  width: '40px', height: '40px', borderRadius: '50%', background: m.role === 'user' ? 'var(--secondary)' : 'var(--primary)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: '800', fontSize: '0.8rem'
+                }}>
+                  {m.role === 'user' ? '👤' : 'AI'}
                 </div>
-                {m.role === 'user' && <div className="avatar user-av">👤</div>}
+                <div>
+                   <div style={{ 
+                      padding: '16px 20px', 
+                      borderRadius: '20px', 
+                      background: m.role === 'user' ? 'var(--secondary)' : '#f1f5f9', 
+                      color: m.role === 'user' ? 'white' : 'var(--text-main)',
+                      boxShadow: 'var(--shadow-sm)',
+                      fontSize: '0.95rem'
+                    }}>
+                      {m.text}
+                   </div>
+                   <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '4px', textAlign: m.role === 'user' ? 'right' : 'left' }}>{m.time}</p>
+                </div>
               </div>
             ))}
-
             {loading && (
-              <div className="message assistant">
-                <div className="avatar">🤖</div>
-                <div className="bubble typing">
-                  <span /><span /><span />
+              <div style={{ alignSelf: 'flex-start', display: 'flex', gap: '12px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: '800', fontSize: '0.8rem' }}>AI</div>
+                <div style={{ padding: '16px 20px', background: '#f1f5f9', borderRadius: '20px', color: 'var(--text-muted)', fontSize: '0.9rem', animation: 'pulse 1.5s infinite' }}>
+                   Analyzing Knowledge Base...
                 </div>
               </div>
             )}
             <div ref={endRef} />
-          </div>
+         </div>
 
-          {/* Input */}
-          <div className="chat-input-bar">
-            <textarea
-              className="chat-input"
-              rows={1}
-              placeholder="Ask about crops, fertilizers, disease treatment…"
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={onKey}
-              disabled={loading}
-            />
-            <button className="btn btn-primary send-btn" onClick={() => send()} disabled={loading || !input.trim()}>
-              {loading ? <span className="mini-spinner" /> : '➤'}
-            </button>
-          </div>
-        </div>
+         {/* Input Area */}
+         <div style={{ padding: '24px', borderTop: '1px solid #e2e8f0', background: 'white' }}>
+            <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', overflowX: 'auto', paddingBottom: '8px' }}>
+               {QUICK_QUESTIONS.map(q => (
+                 <button key={q} onClick={() => send(q)} style={{ 
+                   whiteSpace: 'nowrap', padding: '10px 16px', borderRadius: '50px', border: '1px solid #e2e8f0', background: 'white',
+                   fontSize: '0.8rem', fontWeight: '700', cursor: 'pointer', transition: 'var(--transition)'
+                 }}>
+                   {q}
+                 </button>
+               ))}
+            </div>
+            
+            <div style={{ display: 'flex', gap: '12px' }}>
+               <input 
+                  className="form-input" 
+                  placeholder="Ask a farming question..." 
+                  value={input}
+                  onChange={e => setInput(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && send()}
+                  style={{ borderRadius: '50px' }}
+               />
+               <button className="btn btn-primary" onClick={() => send()} disabled={loading} style={{ width: '100px', borderRadius: '50px' }}>
+                  Send
+               </button>
+            </div>
+         </div>
       </div>
     </div>
   );
