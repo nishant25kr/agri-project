@@ -1,139 +1,123 @@
-from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.core.files.storage import FileSystemStorage
-from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from .models import DiseaseDetection
-# import tensorflow as tf  # Commented out for now
-import numpy as np
 from PIL import Image
 import os
+import json
+import base64
+import google.generativeai as genai
+from dotenv import load_dotenv
 
-# Load the disease detection model (placeholder - you need to add your actual model)
-# model_path = os.path.join(settings.BASE_DIR, 'disease', 'model.h5')
-# if os.path.exists(model_path):
-#     disease_model = tf.keras.models.load_model(model_path)
-# else:
-#     disease_model = None
+load_dotenv()
 
-# Disease classes (example - replace with your actual classes)
-DISEASE_CLASSES = [
-    'Healthy',
-    'Bacterial Blight',
-    'Brown Spot',
-    'Leaf Smut',
-    'Powdery Mildew',
-    'Rust',
-    'Septoria Leaf Spot',
-    'Yellow Leaf Curl Virus'
-]
-
-# Treatment suggestions
-TREATMENT_SUGGESTIONS = {
-    'Healthy': 'Your plant looks healthy! Continue with regular care and monitoring.',
-    'Bacterial Blight': 'Apply copper-based fungicides. Remove infected leaves and improve air circulation.',
-    'Brown Spot': 'Use fungicides containing mancozeb or chlorothalonil. Avoid overhead watering.',
-    'Leaf Smut': 'Apply systemic fungicides. Remove infected plant parts and destroy them.',
-    'Powdery Mildew': 'Use sulfur-based fungicides or neem oil. Improve air circulation around plants.',
-    'Rust': 'Apply fungicides containing propiconazole. Remove infected leaves immediately.',
-    'Septoria Leaf Spot': 'Use copper-based fungicides. Practice crop rotation and avoid overhead irrigation.',
-    'Yellow Leaf Curl Virus': 'Control whitefly vectors. Remove infected plants. Use virus-resistant varieties.'
-}
 
 def disease_home(request):
-    return render(request, 'disease/disease.html')
+    return JsonResponse({"status": "Disease Detection API is online"})
 
-def upload_image(request):
-    if request.method == 'POST' and request.FILES.get('image'):
-        try:
-            uploaded_file = request.FILES['image']
-            
-            # Save the uploaded file
-            fs = FileSystemStorage()
-            filename = fs.save(uploaded_file.name, uploaded_file)
-            file_path = fs.path(filename)
-            
-            # Process the image for prediction
-            predicted_disease, confidence = predict_disease(file_path)
-            
-            # Get treatment suggestion
-            treatment = TREATMENT_SUGGESTIONS.get(predicted_disease, 'Consult with an agricultural expert for proper treatment.')
-            
-            # Save to database
-            detection = DiseaseDetection.objects.create(
-                image=filename,
-                predicted_disease=predicted_disease,
-                confidence=confidence,
-                treatment_suggestion=treatment
-            )
-            
-            return render(request, 'disease/result.html', {
-                'detection': detection,
-                'image_url': fs.url(filename)
-            })
-            
-        except Exception as e:
-            return render(request, 'disease/disease.html', {
-                'error': f'Error processing image: {str(e)}'
-            })
-    
-    return redirect('disease:disease_home')
 
-def predict_disease(image_path):
+def analyze_with_gemini(image_path):
     """
-    Predict disease from uploaded image
-    This is a placeholder function - replace with actual model prediction
+    Use Gemini Vision to analyze a leaf image and return structured diagnosis.
     """
-    try:
-        # Load and preprocess image
-        image = Image.open(image_path)
-        image = image.resize((128, 128))
-        image_array = np.array(image) / 255.0
-        image_array = np.expand_dims(image_array, axis=0)
-        
-        # Placeholder prediction (replace with actual model)
-        # if disease_model:
-        #     predictions = disease_model.predict(image_array)
-        #     predicted_class = np.argmax(predictions[0])
-        #     confidence = float(np.max(predictions[0]))
-        #     disease_name = DISEASE_CLASSES[predicted_class]
-        # else:
-        #     # Dummy prediction for demonstration
-        disease_name = np.random.choice(DISEASE_CLASSES)
-        confidence = np.random.uniform(0.7, 0.95)
-        
-        return disease_name, confidence
-        
-    except Exception as e:
-        return 'Unknown', 0.0
+    api_key = os.getenv('GEMINI_API_KEY')
+    if not api_key or api_key == 'your-gemini-api-key-here':
+        raise ValueError("Gemini API key not configured.")
+
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel(
+        model_name='gemini-2.5-flash-image',
+        generation_config={
+            'temperature': 0.1,   # Low temp = consistent, deterministic answers
+            'max_output_tokens': 800,
+        }
+    )
+
+    # Open and send the actual image to Gemini
+    image = Image.open(image_path).convert("RGB")
+
+    prompt = """You are a professional plant pathologist. Carefully analyze this leaf image and provide a diagnosis.
+
+Respond ONLY with a valid JSON object in exactly this format (no markdown, no extra text):
+{
+  "disease": "<Exact disease name, e.g. 'Early Blight', 'Powdery Mildew', 'Healthy'. Be specific.>",
+  "confidence": <integer from 60 to 99>,
+  "plant": "<Plant species if identifiable, else 'Unknown'>",
+  "cause": "<Brief cause: fungus/bacteria/virus/pest name>",
+  "symptoms": "<Key visible symptoms in 1-2 sentences>",
+  "treatment": "<Specific actionable cure: chemical/fungicide name, dosage, and frequency>",
+  "prevention": "<2-3 specific prevention tips>"
+}
+
+If the leaf looks healthy, set disease to "Healthy" and adjust other fields accordingly.
+Base your diagnosis ONLY on what you actually see in the image — do not guess randomly."""
+
+    response = model.generate_content([prompt, image])
+    text = response.text.strip()
+
+    # Strip markdown code fences if present
+    if text.startswith("```"):
+        text = text.split("```")[1]
+        if text.startswith("json"):
+            text = text[4:]
+    text = text.strip()
+
+    data = json.loads(text)
+    return data
+
 
 @csrf_exempt
 def upload_image_api(request):
-    """JSON API endpoint for React frontend"""
-    if request.method == 'POST' and request.FILES.get('image'):
+    """JSON API endpoint for React frontend — uses Gemini Vision for real diagnosis."""
+    if request.method != 'POST' or not request.FILES.get('image'):
+        return JsonResponse({'success': False, 'error': 'No image uploaded'}, status=400)
+
+    try:
+        uploaded_file = request.FILES['image']
+        fs = FileSystemStorage()
+        filename = fs.save(uploaded_file.name, uploaded_file)
+        file_path = fs.path(filename)
+
+        # Real AI analysis
+        result = analyze_with_gemini(file_path)
+
+        disease      = result.get('disease', 'Unknown')
+        confidence   = result.get('confidence', 75)
+        plant        = result.get('plant', 'Unknown')
+        cause        = result.get('cause', '')
+        symptoms     = result.get('symptoms', '')
+        treatment    = result.get('treatment', 'Consult an agricultural expert.')
+        prevention   = result.get('prevention', '')
+
+        # Save to DB
         try:
-            uploaded_file = request.FILES['image']
-            fs = FileSystemStorage()
-            filename = fs.save(uploaded_file.name, uploaded_file)
-            file_path = fs.path(filename)
-
-            predicted_disease, confidence = predict_disease(file_path)
-            treatment = TREATMENT_SUGGESTIONS.get(predicted_disease, 'Consult with an agricultural expert for proper treatment.')
-
-            detection = DiseaseDetection.objects.create(
+            DiseaseDetection.objects.create(
                 image=filename,
-                predicted_disease=predicted_disease,
-                confidence=confidence,
-                treatment_suggestion=treatment
+                predicted_disease=disease,
+                confidence=float(confidence) / 100.0,
+                treatment_suggestion=treatment,
             )
+        except Exception:
+            pass  # Don't fail if DB save errors
 
-            return JsonResponse({
-                'success': True,
-                'disease': predicted_disease,
-                'confidence': round(float(confidence) * 100, 1),
-                'treatment': treatment,
-                'image_url': fs.url(filename),
-            })
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)}, status=500)
-    return JsonResponse({'success': False, 'error': 'No image uploaded'}, status=400)
+        return JsonResponse({
+            'success': True,
+            'disease': disease,
+            'confidence': confidence,
+            'plant': plant,
+            'cause': cause,
+            'symptoms': symptoms,
+            'treatment': treatment,
+            'prevention': prevention,
+            'image_url': fs.url(filename),
+        })
+
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'AI returned an unexpected format. Please try again.'}, status=500)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+
+def upload_image(request):
+    """Legacy HTML view — redirects to home."""
+    return disease_home(request)

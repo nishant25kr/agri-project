@@ -7,20 +7,11 @@ const TIPS = [
   { icon: '🔍', text: 'Capture both healthy and affected areas in the same shot.' },
 ];
 
-const SEVERITY_CONFIG = {
-  healthy: { label: 'Healthy', bg: 'bg-emerald-50', border: 'border-emerald-200', badge: 'bg-emerald-500', text: 'text-emerald-800', icon: '✅' },
-  mild: { label: 'Mild', bg: 'bg-amber-50', border: 'border-amber-200', badge: 'bg-amber-500', text: 'text-amber-800', icon: '⚠️' },
-  moderate: { label: 'Moderate', bg: 'bg-orange-50', border: 'border-orange-200', badge: 'bg-orange-500', text: 'text-orange-800', icon: '🔶' },
-  severe: { label: 'Severe', bg: 'bg-rose-50', border: 'border-rose-200', badge: 'bg-rose-500', text: 'text-rose-800', icon: '🚨' },
-};
-
-function getSeverity(disease, confidence) {
-  if (!disease) return SEVERITY_CONFIG.mild;
+function getSeverityStyle(disease) {
+  if (!disease) return { bg: 'bg-stone-50', border: 'border-stone-200', badge: '#78716c', text: 'text-stone-700', icon: '🔬', label: 'Unknown' };
   const d = disease.toLowerCase();
-  if (d.includes('healthy')) return SEVERITY_CONFIG.healthy;
-  if (confidence >= 90) return SEVERITY_CONFIG.severe;
-  if (confidence >= 75) return SEVERITY_CONFIG.moderate;
-  return SEVERITY_CONFIG.mild;
+  if (d.includes('healthy')) return { bg: 'bg-emerald-50', border: 'border-emerald-200', badge: '#10b981', text: 'text-emerald-800', icon: '✅', label: 'Healthy' };
+  return { bg: 'bg-rose-50', border: 'border-rose-200', badge: '#f43f5e', text: 'text-rose-800', icon: '🚨', label: 'Disease Detected' };
 }
 
 export default function DiseaseDetection() {
@@ -51,9 +42,8 @@ export default function DiseaseDetection() {
       const data = await res.json();
       if (data.success) {
         setResult(data);
-        // animate confidence bar
         setTimeout(() => setConfAnim(data.confidence), 100);
-      } else setError(data.error || 'Detection failed.');
+      } else setError(data.error || 'Detection failed. Please try again.');
     } catch {
       setError('Server unreachable. Make sure Django is running.');
     } finally {
@@ -63,7 +53,7 @@ export default function DiseaseDetection() {
 
   const reset = () => { setImage(null); setPreview(null); setResult(null); setError(''); setConfAnim(0); };
 
-  const severity = result ? getSeverity(result.disease, result.confidence) : null;
+  const severity = getSeverityStyle(result?.disease);
 
   return (
     <div className="min-h-screen bg-[#FAFAF7]">
@@ -76,9 +66,7 @@ export default function DiseaseDetection() {
             radial-gradient(circle at 10% 30%, rgba(134,192,107,0.07) 0%, transparent 50%),
             radial-gradient(circle at 90% 70%, rgba(251,191,36,0.05) 0%, transparent 45%);
         }
-        .drop-zone {
-          transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
-        }
+        .drop-zone { transition: all 0.3s cubic-bezier(0.16,1,0.3,1); }
         .drop-zone:hover { transform: scale(1.01); }
         .drop-zone.dragging { border-color: #3d8b37 !important; background: rgba(61,139,55,0.04); transform: scale(1.02); }
         .scan-btn {
@@ -94,19 +82,15 @@ export default function DiseaseDetection() {
         .conf-bar { transition: width 1.2s cubic-bezier(0.16,1,0.3,1); }
         .spin { animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .scan-line {
-          animation: scanDown 2s ease-in-out infinite;
-        }
-        @keyframes scanDown {
-          0%   { top: 0%; opacity: 1; }
-          90%  { top: 95%; opacity: 1; }
-          100% { top: 95%; opacity: 0; }
-        }
+        .scan-line { animation: scanDown 2s ease-in-out infinite; }
+        @keyframes scanDown { 0% { top:0%; opacity:1; } 90% { top:95%; opacity:1; } 100% { top:95%; opacity:0; } }
         .grain {
           background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
         }
         .img-enter { animation: imgIn 0.5s cubic-bezier(0.16,1,0.3,1); }
         @keyframes imgIn { from { opacity:0; transform:scale(0.97); } to { opacity:1; transform:scale(1); } }
+        .result-scroll::-webkit-scrollbar { width: 4px; }
+        .result-scroll::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 99px; }
       `}</style>
 
       <div className="d-font leaf-bg pt-28 pb-20 px-4">
@@ -121,7 +105,7 @@ export default function DiseaseDetection() {
               Disease <span className="italic text-[#3d8b37]">Detection</span>
             </h1>
             <p className="text-stone-500 text-lg font-light max-w-xl leading-relaxed">
-              Upload a photo of your plant leaf and get an instant AI-powered diagnosis with a treatment plan.
+              Upload a photo of your plant leaf and get an instant AI-powered diagnosis with specific treatment and cure.
             </p>
           </div>
 
@@ -130,14 +114,12 @@ export default function DiseaseDetection() {
             {/* ── Left: Upload Panel ── */}
             <div className="flex flex-col gap-5">
               <div className="bg-white rounded-3xl border border-stone-100 shadow-sm shadow-black/4 overflow-hidden">
-                {/* Panel header */}
                 <div className="px-7 py-5 border-b border-stone-100">
                   <h2 className="d-serif text-xl font-bold text-stone-900">Upload Leaf Image</h2>
                   <p className="text-stone-400 text-sm mt-0.5">JPG, PNG or WEBP · Max 10 MB</p>
                 </div>
 
                 <div className="p-6">
-                  {/* Drop zone — empty */}
                   {!preview && (
                     <div
                       className={`drop-zone ${drag ? 'dragging' : ''} border-2 border-dashed border-stone-200 rounded-2xl h-64 flex flex-col items-center justify-center cursor-pointer bg-stone-50 hover:border-[#3d8b37]/40 hover:bg-emerald-50/20`}
@@ -157,12 +139,10 @@ export default function DiseaseDetection() {
                     </div>
                   )}
 
-                  {/* Preview */}
                   {preview && (
                     <div className="img-enter">
                       <div className="relative rounded-2xl overflow-hidden h-64 bg-stone-900">
                         <img src={preview} alt="Leaf preview" className="w-full h-full object-cover" />
-                        {/* Scan animation overlay when loading */}
                         {loading && (
                           <div className="absolute inset-0 bg-[#1a3d19]/60 flex items-center justify-center">
                             <div className="scan-line absolute left-0 right-0 h-0.5 bg-[#86c06b]/80" style={{ boxShadow: '0 0 12px rgba(134,192,107,0.8)' }} />
@@ -171,12 +151,11 @@ export default function DiseaseDetection() {
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                               </svg>
-                              <p className="text-white font-semibold text-sm">Scanning leaf patterns…</p>
-                              <p className="text-white/50 text-xs mt-1">Running pathology model</p>
+                              <p className="text-white font-semibold text-sm">Analyzing with Gemini Vision…</p>
+                              <p className="text-white/50 text-xs mt-1">This may take 5–10 seconds</p>
                             </div>
                           </div>
                         )}
-                        {/* Corner badge */}
                         {!loading && (
                           <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-xl px-3 py-1.5 text-xs font-semibold text-stone-600 shadow-sm">
                             {image?.name?.length > 20 ? image.name.slice(0, 20) + '…' : image?.name}
@@ -236,7 +215,7 @@ export default function DiseaseDetection() {
 
             {/* ── Right: Result Panel ── */}
             <div className="flex flex-col gap-5 md:sticky md:top-28">
-              <div className="bg-white rounded-3xl border border-stone-100 shadow-sm shadow-black/4 overflow-hidden min-h-[420px] flex flex-col">
+              <div className="bg-white rounded-3xl border border-stone-100 shadow-sm shadow-black/4 overflow-hidden flex flex-col" style={{ minHeight: '420px' }}>
 
                 {/* Empty state */}
                 {!result && !loading && (
@@ -248,13 +227,12 @@ export default function DiseaseDetection() {
                     <p className="text-stone-300 text-sm max-w-[230px] leading-relaxed">
                       Upload a leaf photo and run the diagnosis to see results here.
                     </p>
-                    {/* Feature hints */}
                     <div className="mt-8 grid grid-cols-2 gap-3 w-full">
                       {[
-                        { icon: '🦠', label: '400+ diseases identified' },
-                        { icon: '⚡', label: 'Results in under 3s' },
-                        { icon: '💊', label: 'Treatment plans included' },
-                        { icon: '🌿', label: '50+ plant species' },
+                        { icon: '🦠', label: 'Specific disease name' },
+                        { icon: '⚡', label: 'AI-powered by Gemini' },
+                        { icon: '💊', label: 'Exact cure & dosage' },
+                        { icon: '🛡️', label: 'Prevention tips' },
                       ].map((f, i) => (
                         <div key={i} className="bg-stone-50 border border-stone-100 rounded-2xl p-3 flex items-center gap-2.5">
                           <span className="text-xl">{f.icon}</span>
@@ -274,9 +252,9 @@ export default function DiseaseDetection() {
                       <div className="absolute inset-3 flex items-center justify-center text-2xl">🌿</div>
                     </div>
                     <p className="d-serif text-lg font-semibold text-stone-700 mb-1">Analyzing Leaf…</p>
-                    <p className="text-stone-400 text-sm mb-7">Running plant pathology model</p>
+                    <p className="text-stone-400 text-sm mb-7">Gemini Vision is examining your image</p>
                     <div className="flex flex-col gap-2.5 w-full">
-                      {['Extracting visual features', 'Matching disease patterns', 'Generating treatment plan'].map((s, i) => (
+                      {['Identifying plant species', 'Detecting disease patterns', 'Finding specific cure & treatment'].map((s, i) => (
                         <div key={i} className="flex items-center gap-3 bg-stone-50 rounded-xl px-4 py-2.5">
                           <div className="w-1.5 h-1.5 rounded-full bg-[#3d8b37] flex-shrink-0" />
                           <span className="text-xs text-stone-500 font-medium">{s}</span>
@@ -287,24 +265,34 @@ export default function DiseaseDetection() {
                 )}
 
                 {/* Result state */}
-                {result && !loading && severity && (
-                  <div className="result-enter flex-1 flex flex-col">
+                {result && !loading && (
+                  <div className="result-enter flex-1 flex flex-col overflow-y-auto result-scroll">
+
                     {/* Status banner */}
-                    <div className={`${severity.bg} border-b ${severity.border} px-7 py-5 flex items-center gap-4`}>
-                      <div className={`w-10 h-10 ${severity.badge} rounded-xl flex items-center justify-center text-white text-xl flex-shrink-0`}>
-                        {severity.icon}
+                    <div className={`${severity.bg} border-b ${severity.border} px-7 py-5`}>
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
+                          style={{ background: severity.badge }}>
+                          {severity.icon}
+                        </div>
+                        <div>
+                          <div className="text-xs font-bold tracking-widest uppercase text-stone-400">{severity.label}</div>
+                          <div className={`d-serif text-xl font-bold ${severity.text}`}>{result.disease}</div>
+                        </div>
                       </div>
-                      <div>
-                        <div className="text-xs font-bold tracking-widest uppercase text-stone-400 mb-0.5">Diagnosis Complete</div>
-                        <div className={`d-serif text-xl font-bold ${severity.text}`}>{result.disease}</div>
-                      </div>
+                      {result.plant && result.plant !== 'Unknown' && (
+                        <div className="text-xs text-stone-400 font-medium mt-1">
+                          🌿 Plant: <span className="text-stone-600 font-semibold">{result.plant}</span>
+                          {result.cause && <> · Cause: <span className="text-stone-600 font-semibold">{result.cause}</span></>}
+                        </div>
+                      )}
                     </div>
 
-                    <div className="p-7 flex flex-col gap-5 flex-1">
+                    <div className="p-6 flex flex-col gap-4 flex-1">
                       {/* Confidence bar */}
                       <div>
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider">Detection Confidence</span>
+                          <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider">AI Confidence</span>
                           <span className="text-base font-bold text-[#3d8b37]">{result.confidence}%</span>
                         </div>
                         <div className="h-2.5 bg-stone-100 rounded-full overflow-hidden">
@@ -313,22 +301,41 @@ export default function DiseaseDetection() {
                             style={{ width: `${confAnim}%` }}
                           />
                         </div>
-                        <div className="flex justify-between mt-1.5 text-xs text-stone-300">
-                          <span>0%</span><span>50%</span><span>100%</span>
-                        </div>
                       </div>
 
-                      {/* Treatment plan */}
-                      <div className="bg-stone-50 border border-stone-100 rounded-2xl p-5 flex-1">
-                        <div className="flex items-center gap-2 mb-3">
-                          <span className="text-lg">💊</span>
-                          <span className="text-xs font-bold tracking-widest uppercase text-stone-500">Suggested Action Plan</span>
+                      {/* Symptoms */}
+                      {result.symptoms && (
+                        <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4">
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <span className="text-sm">🔍</span>
+                            <span className="text-xs font-bold tracking-widest uppercase text-amber-700">Observed Symptoms</span>
+                          </div>
+                          <p className="text-amber-900 text-sm leading-relaxed">{result.symptoms}</p>
                         </div>
-                        <p className="text-stone-700 text-sm leading-relaxed">{result.treatment}</p>
+                      )}
+
+                      {/* Treatment */}
+                      <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4">
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <span className="text-sm">💊</span>
+                          <span className="text-xs font-bold tracking-widest uppercase text-emerald-700">Treatment & Cure</span>
+                        </div>
+                        <p className="text-emerald-900 text-sm leading-relaxed font-medium">{result.treatment}</p>
                       </div>
+
+                      {/* Prevention */}
+                      {result.prevention && (
+                        <div className="bg-sky-50 border border-sky-100 rounded-2xl p-4">
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <span className="text-sm">🛡️</span>
+                            <span className="text-xs font-bold tracking-widest uppercase text-sky-700">Prevention Tips</span>
+                          </div>
+                          <p className="text-sky-900 text-sm leading-relaxed">{result.prevention}</p>
+                        </div>
+                      )}
 
                       {/* CTA row */}
-                      <div className="flex flex-col gap-3">
+                      <div className="flex flex-col gap-3 mt-auto">
                         <a
                           href="/chatbot"
                           className="flex items-center justify-between bg-[#1a3d19] hover:bg-[#243f23] transition-colors text-white rounded-2xl px-5 py-4 no-underline group"

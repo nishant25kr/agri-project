@@ -9,14 +9,14 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      // Proxy Django API calls during development
-      '/predict': { target: 'http://localhost:8000', changeOrigin: true },
-      '/weather': { target: 'http://localhost:8000', changeOrigin: true },
-      '/disease': { target: 'http://localhost:8000', changeOrigin: true },
-      '/chatbot': { target: 'http://localhost:8000', changeOrigin: true },
-      '/alerts': { target: 'http://localhost:8000', changeOrigin: true },
-      '/send-contact': { target: 'http://localhost:8000', changeOrigin: true },
-      '/media': { target: 'http://localhost:8000', changeOrigin: true },
+      // Only proxy actual backend API calls — NOT top-level page routes
+      '/predict':        { target: 'http://localhost:8000', changeOrigin: true },
+      '/weather/get-weather': { target: 'http://localhost:8000', changeOrigin: true },
+      '/disease/api':    { target: 'http://localhost:8000', changeOrigin: true },
+      '/chatbot/send-message': { target: 'http://localhost:8000', changeOrigin: true },
+      '/alerts/get-alerts':    { target: 'http://localhost:8000', changeOrigin: true },
+      '/send-contact':   { target: 'http://localhost:8000', changeOrigin: true },
+      '/media':          { target: 'http://localhost:8000', changeOrigin: true },
     }
   }
 })
