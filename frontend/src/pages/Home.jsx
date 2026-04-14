@@ -69,7 +69,6 @@ const FEATURES = [
 const STATS = [
   { value: "98.4%", label: "Diagnosis Accuracy", sub: "across 400+ crop diseases" },
   { value: "2.3s", label: "Avg Scan Time", sub: "from photo to result" },
-  { value: "180k+", label: "Farmers Served", sub: "across 28 states" },
   { value: "24/7", label: "AI Availability", sub: "zero downtime SLA" },
 ];
 
@@ -369,7 +368,7 @@ export default function Home() {
       <section className="py-20 bg-white">
         <div className="max-w-6xl mx-auto px-6">
           <AnimatedSection>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-6">
               {STATS.map((s, i) => (
                 <div key={i} className="text-center py-8 px-4 rounded-2xl bg-stone-50 border border-stone-100">
                   <div className="font-serif text-4xl md:text-5xl font-bold text-stone-900 mb-1">{s.value}</div>
