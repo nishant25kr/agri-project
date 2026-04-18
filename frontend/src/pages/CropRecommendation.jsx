@@ -294,7 +294,7 @@ export default function CropRecommendation() {
                         <div className="flex items-center gap-4">
                           <div className="text-5xl">{getCropIcon(result.crop)}</div>
                           <div>
-                            <h2 className="crop-serif text-3xl font-bold text-white capitalize leading-none mb-1">
+                            <h2 className="crop-serif text-3xl font-bold  capitalize leading-none mb-1">
                               {result.crop}
                             </h2>
                             <p className="text-white/70 text-sm">Best crop for your conditions</p>

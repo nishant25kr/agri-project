@@ -67,7 +67,7 @@ const FEATURES = [
 ];
 
 const STATS = [
-  { value: "98.4%", label: "Diagnosis Accuracy", sub: "across 400+ crop diseases" },
+  { value: "90.4%", label: "Diagnosis Accuracy", sub: "across 400+ crop diseases" },
   { value: "2.3s", label: "Avg Scan Time", sub: "from photo to result" },
   { value: "24/7", label: "AI Availability", sub: "zero downtime SLA" },
 ];
@@ -265,17 +265,7 @@ export default function Home() {
               </a>
             </div>
 
-            <div className="flex items-center gap-6">
-              <div className="flex -space-x-3">
-                {["🧑‍🌾", "👩‍🌾", "🧑‍🌾", "👨‍🌾"].map((e, i) => (
-                  <div key={i} className="w-9 h-9 rounded-full bg-gradient-to-br from-green-100 to-emerald-200 border-2 border-white flex items-center justify-center text-sm shadow-sm">{e}</div>
-                ))}
-              </div>
-              <div>
-                <div className="text-sm font-semibold text-stone-800">180,000+ farmers</div>
-                <div className="text-xs text-stone-400">trust AgriZone daily</div>
-              </div>
-            </div>
+
           </div>
 
           {/* Right — mock scan card */}
@@ -311,7 +301,7 @@ export default function Home() {
                       <div className="text-sm text-stone-400 mt-0.5">Alternaria solani · Tomato</div>
                     </div>
                     <div className="flex flex-col items-end">
-                      <div className="text-2xl font-bold text-[#3d8b37]">97%</div>
+                      <div className="text-2xl font-bold text-[#3d8b37]">95%</div>
                       <div className="text-xs text-stone-400">Confidence</div>
                     </div>
                   </div>
@@ -507,9 +497,6 @@ export default function Home() {
                     Protect your crops <br />
                     <span className="italic text-[#86c06b]">before it's too late.</span>
                   </h2>
-                  <p className="text-white/60 text-base leading-relaxed">
-                    Join 180,000+ farmers using AgriZone to detect disease early, consult AI, and make data-driven decisions every season.
-                  </p>
                 </div>
 
                 <div className="flex flex-col items-center gap-4 flex-shrink-0">
