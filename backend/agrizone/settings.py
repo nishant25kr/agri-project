@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'disease',
     'chatbot',
     'pest_alerts',
+    'market_prices',
 ]
 
 MIDDLEWARE = [

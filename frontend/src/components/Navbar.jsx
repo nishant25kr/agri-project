@@ -8,6 +8,7 @@ const NAV_LINKS = [
   { to: '/disease', label: 'Disease' },
   { to: '/chatbot', label: 'AI Chat' },
   { to: '/pest-alerts', label: 'Alerts' },
+  { to: '/market', label: '📊 Prices' },
 ];
 
 export default function Navbar() {

@@ -49,11 +49,13 @@ export default function Weather() {
     if (!target.trim()) return;
     setLoading(true); setError(''); setWeather(null);
     try {
+      console.log(API_BASE)
       const res = await fetch(`${API_BASE}/weather/get-weather/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ city: target }),
       });
+      console.log(res)
       const data = await res.json();
       if (data.success) { setWeather(data); setCity(target); }
       else setError(data.error || 'Could not get weather data.');

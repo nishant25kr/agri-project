@@ -6,6 +6,7 @@ import Weather from './pages/Weather';
 import DiseaseDetection from './pages/DiseaseDetection';
 import Chatbot from './pages/Chatbot';
 import PestAlerts from './pages/PestAlerts';
+import MarketPrices from './pages/MarketPrices';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import './index.css';
@@ -34,6 +35,7 @@ export default function App() {
         <Route path="/disease"     element={<DiseaseDetection />} />
         <Route path="/chatbot"     element={<Chatbot />} />
         <Route path="/pest-alerts" element={<PestAlerts />} />
+        <Route path="/market"      element={<MarketPrices />} />
         <Route path="/about"       element={<About />} />
         <Route path="/contact"     element={<Contact />} />
         <Route path="*"            element={<NotFound />} />

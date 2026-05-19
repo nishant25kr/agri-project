@@ -16,6 +16,7 @@ urlpatterns = [
     path('disease/', include('disease.urls')),
     path('chatbot/', include('chatbot.urls')),
     path('alerts/', include('pest_alerts.urls')),
+    path('market/', include('market_prices.urls')),
 ]
 
 if settings.DEBUG:
