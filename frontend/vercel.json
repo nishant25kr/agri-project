@@ -1,32 +1,32 @@
 {
   "rewrites": [
     {
-      "source": "/predict(.*)",
-      "destination": "YOUR_DJANGO_BACKEND_URL_HERE/predict$1"
+      "source": "/predict/:path*",
+      "destination": "https://agri-project-78od.onrender.com/predict/:path*"
     },
     {
-      "source": "/weather/get-weather(.*)",
-      "destination": "YOUR_DJANGO_BACKEND_URL_HERE/weather/get-weather$1"
+      "source": "/weather/get-weather/:path*",
+      "destination": "https://agri-project-78od.onrender.com/weather/get-weather/:path*"
     },
     {
-      "source": "/disease/api(.*)",
-      "destination": "YOUR_DJANGO_BACKEND_URL_HERE/disease/api$1"
+      "source": "/disease/api/:path*",
+      "destination": "https://agri-project-78od.onrender.com/disease/api/:path*"
     },
     {
-      "source": "/chatbot/send-message(.*)",
-      "destination": "YOUR_DJANGO_BACKEND_URL_HERE/chatbot/send-message$1"
+      "source": "/chatbot/send-message/:path*",
+      "destination": "https://agri-project-78od.onrender.com/chatbot/send-message/:path*"
     },
     {
-      "source": "/alerts/get-alerts(.*)",
-      "destination": "YOUR_DJANGO_BACKEND_URL_HERE/alerts/get-alerts$1"
+      "source": "/alerts/get-alerts/:path*",
+      "destination": "https://agri-project-78od.onrender.com/alerts/get-alerts/:path*"
     },
     {
-      "source": "/send-contact(.*)",
-      "destination": "YOUR_DJANGO_BACKEND_URL_HERE/send-contact$1"
+      "source": "/send-contact/:path*",
+      "destination": "https://agri-project-78od.onrender.com/send-contact/:path*"
     },
     {
-      "source": "/media(.*)",
-      "destination": "YOUR_DJANGO_BACKEND_URL_HERE/media$1"
+      "source": "/media/:path*",
+      "destination": "https://agri-project-78od.onrender.com/media/:path*"
     },
     {
       "source": "/(.*)",
