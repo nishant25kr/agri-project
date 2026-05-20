@@ -2,31 +2,31 @@
   "rewrites": [
     {
       "source": "/predict(.*)",
-      "destination": "YOUR_DEPLOYED_BACKEND_URL/predict$1"
+      "destination": "YOUR_DJANGO_BACKEND_URL_HERE/predict$1"
     },
     {
       "source": "/weather/get-weather(.*)",
-      "destination": "YOUR_DEPLOYED_BACKEND_URL/weather/get-weather$1"
+      "destination": "YOUR_DJANGO_BACKEND_URL_HERE/weather/get-weather$1"
     },
     {
       "source": "/disease/api(.*)",
-      "destination": "YOUR_DEPLOYED_BACKEND_URL/disease/api$1"
+      "destination": "YOUR_DJANGO_BACKEND_URL_HERE/disease/api$1"
     },
     {
       "source": "/chatbot/send-message(.*)",
-      "destination": "YOUR_DEPLOYED_BACKEND_URL/chatbot/send-message$1"
+      "destination": "YOUR_DJANGO_BACKEND_URL_HERE/chatbot/send-message$1"
     },
     {
       "source": "/alerts/get-alerts(.*)",
-      "destination": "YOUR_DEPLOYED_BACKEND_URL/alerts/get-alerts$1"
+      "destination": "YOUR_DJANGO_BACKEND_URL_HERE/alerts/get-alerts$1"
     },
     {
       "source": "/send-contact(.*)",
-      "destination": "YOUR_DEPLOYED_BACKEND_URL/send-contact$1"
+      "destination": "YOUR_DJANGO_BACKEND_URL_HERE/send-contact$1"
     },
     {
       "source": "/media(.*)",
-      "destination": "YOUR_DEPLOYED_BACKEND_URL/media$1"
+      "destination": "YOUR_DJANGO_BACKEND_URL_HERE/media$1"
     },
     {
       "source": "/(.*)",
