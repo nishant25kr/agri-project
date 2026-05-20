@@ -1,32 +1,32 @@
 {
   "rewrites": [
     {
-      "source": "/predict/:path*",
-      "destination": "https://agri-project-78od.onrender.com/predict/:path*"
+      "source": "/predict(.*)",
+      "destination": "https://agri-project-78od.onrender.com/predict$1"
     },
     {
-      "source": "/weather/get-weather/:path*",
-      "destination": "https://agri-project-78od.onrender.com/weather/get-weather/:path*"
+      "source": "/weather/get-weather(.*)",
+      "destination": "https://agri-project-78od.onrender.com/weather/get-weather$1"
     },
     {
-      "source": "/disease/api/:path*",
-      "destination": "https://agri-project-78od.onrender.com/disease/api/:path*"
+      "source": "/disease/api(.*)",
+      "destination": "https://agri-project-78od.onrender.com/disease/api$1"
     },
     {
-      "source": "/chatbot/send-message/:path*",
-      "destination": "https://agri-project-78od.onrender.com/chatbot/send-message/:path*"
+      "source": "/chatbot/send-message(.*)",
+      "destination": "https://agri-project-78od.onrender.com/chatbot/send-message$1"
     },
     {
-      "source": "/alerts/get-alerts/:path*",
-      "destination": "https://agri-project-78od.onrender.com/alerts/get-alerts/:path*"
+      "source": "/alerts/get-alerts(.*)",
+      "destination": "https://agri-project-78od.onrender.com/alerts/get-alerts$1"
     },
     {
-      "source": "/send-contact/:path*",
-      "destination": "https://agri-project-78od.onrender.com/send-contact/:path*"
+      "source": "/send-contact(.*)",
+      "destination": "https://agri-project-78od.onrender.com/send-contact$1"
     },
     {
-      "source": "/media/:path*",
-      "destination": "https://agri-project-78od.onrender.com/media/:path*"
+      "source": "/media(.*)",
+      "destination": "https://agri-project-78od.onrender.com/media$1"
     },
     {
       "source": "/(.*)",
