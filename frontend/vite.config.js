@@ -17,6 +17,7 @@ export default defineConfig({
       '/alerts/get-alerts':    { target: 'http://localhost:8000', changeOrigin: true },
       '/send-contact':   { target: 'http://localhost:8000', changeOrigin: true },
       '/media':          { target: 'http://localhost:8000', changeOrigin: true },
+      '/market':         { target: 'http://localhost:8000', changeOrigin: true },
     }
   }
 })
