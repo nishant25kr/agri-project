@@ -29,19 +29,19 @@ def send_message(request):
             bot_response = get_ai_response(user_message)
             
             # Save to database
-            try:
-                chat = ChatMessage.objects.create(
-                    user_message=user_message,
-                    bot_response=bot_response
-                )
-                timestamp = chat.created_at.strftime('%H:%M')
-            except:
-                timestamp = datetime.datetime.now().strftime('%H:%M')
+            # try:
+            #     chat = ChatMessage.objects.create(
+            #         user_message=user_message,
+            #         bot_response=bot_response
+            #     )
+            #     timestamp = chat.created_at.strftime('%H:%M')
+            # except:
+            #     timestamp = datetime.datetime.now().strftime('%H:%M')
             
             return JsonResponse({
                 'success': True,
                 'response': bot_response,
-                'timestamp': timestamp
+                # 'timestamp': timestamp
             })
             
         except Exception as e:
@@ -79,19 +79,30 @@ def get_gemini_response(user_message):
         
         # Use the correct model name
         model = genai.GenerativeModel(
-            model_name='gemini-2.0-flash',
+        model_name='gemini-2.5-flash-image',
             generation_config={
-                'temperature': 0.7,
-                'max_output_tokens': 500,
+                'temperature': 0.1,   # Low temp = consistent, deterministic answers
+                'max_output_tokens': 800,
             }
         )
+        # model = genai.GenerativeModel(
+        #     model_name='gemini-2.0-flash',
+        #     generation_config={
+        #         'temperature': 0.7,
+        #         'max_output_tokens': 500,
+        #     }
+        # )
         
-        # Create agricultural expert prompt
-        prompt = f"""You are AgriGPT, an expert agricultural AI assistant. Provide specific, practical farming advice with exact details (fertilizer ratios, pesticide names, dosages, timing).
+        # Create agricultural expert prompt with structured formatting instructions
+        prompt = f"""You are an expert agricultural AI assistant.
+Answer in a clean, organized format with clear headings and bullet points.
+Use plain text only, and do not use markdown or raw asterisks.
+If the user asks about crop planning, include sections such as Crop, Variety, Sowing time, Seed rate, Fertilizer, Irrigation, and Benefits.
+If the user asks a general agriculture question, provide a concise, structured answer with numbered steps or bullets.
 
 Question: {user_message}
 
-Answer (be specific and actionable):"""
+Answer:"""
         
         # Generate response
         response = model.generate_content(prompt)

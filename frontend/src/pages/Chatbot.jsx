@@ -148,7 +148,7 @@ export default function Chatbot() {
                 </div>
               </div>
               <div className="ml-auto flex items-center gap-2 bg-emerald-50 border border-emerald-100 rounded-xl px-3 py-1.5">
-                <span className="text-xs font-semibold text-emerald-700">🔬 Powered by Gemini</span>
+                <span className="text-xs font-semibold text-emerald-700">🔬 Powered by OpenAI</span>
               </div>
             </div>
 
@@ -178,6 +178,7 @@ export default function Chatbot() {
                     <div
                       className="text-sm leading-relaxed rounded-2xl px-5 py-3.5"
                       style={{
+                        whiteSpace: 'pre-wrap',
                         background: m.role === 'user'
                           ? 'linear-gradient(135deg, #1a3d19 0%, #3d8b37 100%)'
                           : '#f8faf7',
